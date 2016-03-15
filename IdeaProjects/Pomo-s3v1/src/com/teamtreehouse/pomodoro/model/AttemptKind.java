@@ -4,7 +4,7 @@ package com.teamtreehouse.pomodoro.model;
  * Created by Brandon on 3/12/2016.
  */
 public enum AttemptKind {
-    FOCUS(3, "Focus Time"),
+    FOCUS(25 * 60, "Focus Time"),
     BREAK(5 * 60, "Break Time");
 
     private int mTotalSeconds;

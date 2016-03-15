@@ -12,12 +12,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.util.Duration;
 
 /**
  * Created by Brandon on 3/12/2016.
  */
 public class Home {
+    private final AudioClip mApplause;
     @FXML
     private VBox container;
 
@@ -34,6 +36,7 @@ public class Home {
     public Home(){
         mTimerText = new SimpleStringProperty();
         setTimerText(0);
+        mApplause = new AudioClip(getClass().getResource("/sounds/applause.mp3").toExternalForm());
     }
 
     public String getTimerText() {
@@ -68,6 +71,7 @@ public class Home {
         }));
         mTimeline.setOnFinished(e -> {
             saveCurrentAttempt();
+            mApplause.play();
             prepareAttempt(mCurrentAttempt.getKind() == AttemptKind.FOCUS ?
                             AttemptKind.BREAK : AttemptKind.FOCUS);
         });
@@ -86,10 +90,12 @@ public class Home {
     }
 
     public void playTimer(){
+        container.getStyleClass().add("playing");
         mTimeline.play();
     }
 
     public void pauseTimer(){
+        container.getStyleClass().remove("playing");
         mTimeline.pause();
     }
 
@@ -98,17 +104,29 @@ public class Home {
     }
 
     private void clearAttemptStyles(){
+        container.getStyleClass().remove("playing");
         for (AttemptKind kind : AttemptKind.values()){
             container.getStyleClass().remove(kind.toString().toLowerCase());
         }
     }
 
-    public void DEBUG(ActionEvent actionEvent) {
-        System.out.println("Hello!");
-    }
+
 
     public void handleRestart(ActionEvent actionEvent) {
         prepareAttempt(AttemptKind.FOCUS);
         playTimer();
+    }
+
+    public void handlePlay(ActionEvent actionEvent) {
+        if (mCurrentAttempt == null){
+            handleRestart(actionEvent);
+        }else {
+            playTimer();
+        }
+
+    }
+
+    public void handlePause(ActionEvent actionEvent) {
+        pauseTimer();
     }
 }
